@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+
+# Make sure we’re using the latest Homebrew
+brew update
+
+brew install graphicsmagick
+brew install rename # http://plasmasturm.org/code/rename/
+brew install the_silver_searcher # aka ag https://github.com/ggreer/the_silver_searcher
+brew install ffmpeg --with-fdk-aac --with-ffplay --with-freetype --with-libass --with-libquvi --with-libvorbis --with-libvpx --with-opus --with-x265
+
+# Upgrade any already-installed formulae
+brew upgrade
+
+# Remove outdated versions from the cellar
+brew cleanup

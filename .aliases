@@ -1,0 +1,204 @@
+alias gc='git commit -am'
+
+alias edit-zshrc="vim ~/.zshrc"
+alias edit-ohmyzsh="vim ~/.oh-my-zsh"
+alias edit-aliases="vim ~/.aliases"
+
+# if user is not root, pass all commands via sudo #
+if [ $UID -ne 0 ]; then
+    alias reboot='sudo reboot'
+    alias update='sudo apt-get upgrade'
+fi
+
+alias path='echo -e ${PATH//:/\\n}'
+alias paste=pbpaste
+
+function copy {
+  echo "$@" | pbcopy
+}
+
+# function rename {
+#   for i in *;
+#   do
+#     #echo $i | sed "s/$1/$2/" | xargs echo
+#     new_name=`echo $i | sed "s/$1/$2/"`
+#     mv $i $new_name
+#   done
+# }
+#
+# function rename_with_index {
+#   i=1
+#   for name in *;
+#   do
+#     #echo $name
+#     f=${name%.*}
+#     e=${name##*.}
+#     #echo $f
+#     #echo $e
+#     #echo $i
+#     nf=$(printf "$1"_%04d."$e" $i)
+#     #echo $(printf "$name -> $nf")
+#     mv $name $nf
+#     i=$((i + 1))
+#   done
+# }
+
+function tabs2spaces {
+  for file in `find . -name "$1"`; do expand -t 2 $file > $file.new; mv $file.new $file; done
+}
+
+function markdown2pdf {
+  markdown $1 | htmldoc --cont --headfootsize 8.0 --linkcolor blue --linkstyle plain --format pdf14 - > $2
+}
+
+function convert2wmv {
+  ffmpeg -i $1 -c:v wmv2 -b:v 20M -c:a copy ${2:=${1%.*}.wmv}
+}
+
+function convert2prores {
+  ffmpeg -i $1 -c:v prores -profile:v 2 -c:a aiff -b:a 192k ${2:=${1%.*}.mov}
+}
+
+function convert2proreshq {
+  ffmpeg -i $1 -c:v prores -profile:v 3 -c:a aiff -b:a 192k ${2:=${1%.*}.mov}
+}
+
+function convert2mkv {
+  ffmpeg -i $1 -c:v libx264 -preset medium -c:a copy -pix_fmt yuv420p ${2:=${1%.*}.mkv}
+}
+
+function convert2formats {
+  mkdir x264
+  mkdir prores
+  for file in $*
+    do
+      echo "${file} -> x264/${file%.*}_x264.mov"
+      ffmpeg -i $file -loglevel panic -vf scale=-1:720 -c:a copy -c:v libx264 -x264opts crf=18 -pix_fmt yuv420p x264/${file%.*}_x264.mov
+      echo "${file} -> prores/${file%.*}_x264.mov"
+      ffmpeg -i $file -loglevel panic -c:v prores -profile:v 3 -c:a libfaac -b:a 192k prores/${file%.*}_prores.mov
+  done
+}
+
+function convert2m4v {
+  ffmpeg -i $1 -c:v libx264 -pix_fmt yuv420p -x264opts crf=15 ${2:=${1%.*}.m4v}
+}
+
+function convert2mp4High {
+  ffmpeg -i $1 -c:v libx264 -crf 15 -preset slow -c:a libfaac -b:a 192k -ac 2 ${2:=${1%.*}.mp4}
+}
+
+function convert2mp4 {
+  mkdir mp4
+  for file in $*
+    do
+      ffmpeg -i $file -codec:v libx264 -preset veryslow -q:v 4 -pix_fmt yuv420p -profile:v baseline -movflags faststart -threads 16 mp4/${file%.*}.mp4
+  done
+}
+
+function convert2webm {
+  mkdir webm
+  for file in $*
+    do
+      ffmpeg -i $file -codec:v libvpx -crf 4 -b:v 2M -threads 16 -codec:a libvorbis -b:a 128k webm/${file%.*}.webm
+  done
+}
+
+function convert2mp3 {
+  ffmpeg -i $1 -acodec libmp3lame -ab 320k ${2:=${1%.*}.mp3}
+}
+
+function label {
+  if [ $# -lt 2 ]; then
+    echo "USAGE: label [0-7] file1 [file2] ..."
+    echo "Sets the Finder label (color) for files"
+    echo "Default colors:"
+    echo " 0  No color"
+    echo " 1  Orange"
+    echo " 2  Red"
+    echo " 3  Yellow"
+    echo " 4  Blue"
+    echo " 5  Purple"
+    echo " 6  Green"
+    echo " 7  Gray"
+  else
+    osascript - "$@" << EOF
+    on run argv
+        set labelIndex to (item 1 of argv as number)
+        repeat with i from 2 to (count of argv)
+          tell application "Finder"
+              set theFile to POSIX file (item i of argv) as alias
+              set label index of theFile to labelIndex
+          end tell
+        end repeat
+    end run
+EOF
+  fi
+}
+
+# git aliases
+alias update-submodules="git submodule foreach \"(git checkout master; git pull)&\""
+
+alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias flush="dscacheutil -flushcache" # Flush DNS cache
+
+alias gzip="gzip -9n" # set strongest compression level as ‘default’ for gzip
+alias ping="ping -c 5" # ping 5 times ‘by default’
+
+#xcode
+alias xcode-show-build-settings="xcodebuild -showBuildSettings"
+
+#web dev
+function php-server {
+	pkill php;
+	php -S localhost:${1:-8000};
+}
+
+function nginx-server {
+	sudo pkill nginx;
+	sudo nginx
+}
+
+function hosts {
+  vim -w /etc/hosts;
+  dscacheutil -flushcache;
+}
+
+function crush {
+  for file in *.png;
+    do pngcrush "$file" "${file%.png}-crushed.png" && mv "${file%.png}-crushed.png" "$file";
+  done;
+}
+
+function lsn {
+  ls -l | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/) \
+             *2^(8-i));if(k)printf("%0o ",k);print}'
+}
+
+#.scripts/install_php-mysql-nginx
+alias nginx-start='sudo launchctl load ~/Library/LaunchAgents/homebrew.mxcl.nginx.plist'
+alias nginx-stop='sudo launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.nginx.plist'
+alias nginx-restart='nginx.stop && nginx.start'
+alias php-start="launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist"
+alias php-stop="launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist"
+alias php-restart='php.stop && php.start'
+alias mysql-start="launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist"
+alias mysql-stop="launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist"
+alias mysql-restart='mysql.stop && mysql.start'
+alias nginx-config='vim /usr/local/etc/nginx/'
+alias nginx-logs.error='tail -250f /usr/local/etc/nginx/logs/error.log'
+alias nginx-logs.access='tail -250f /usr/local/etc/nginx/logs/access.log'
+alias nginx-logs.default.access='tail -250f /usr/local/etc/nginx/logs/default.access.log'
+alias nginx-logs.default-ssl.access='tail -250f /usr/local/etc/nginx/logs/default-ssl.access.log'
+alias nginx-logs.phpmyadmin.error='tail -250f /usr/local/etc/nginx/logs/phpmyadmin.error.log'
+alias nginx-logs.phpmyadmin.access='tail -250f /usr/local/etc/nginx/logs/phpmyadmin.access.log'
+
+#rails
+function rails-clean {
+  killall -KILL ruby;
+  rake db:drop && rake db:create && rake db:migrate && rake db:seed;
+  rake db:drop RAILS_ENV=test && rake db:create RAILS_ENV=test && rake db:schema:load RAILS_ENV=test && rake db:seed RAILS_ENV=test;
+}
+
+#meteor
+alias meteor-run="../meteor/meteor --settings config/settings.json"

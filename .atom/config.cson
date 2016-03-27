@@ -1,0 +1,55 @@
+"*":
+  "atom-ternjs": {}
+  core:
+    disabledPackages: [
+      "atom-ternjs"
+      "linter-coffeelint"
+      "racer"
+    ]
+    excludeVcsIgnoredPaths: false
+  editor:
+    fontFamily: "InputMonoNarrow-Light"
+    fontSize: 12
+    invisibles: {}
+    preferredLineLength: 100
+    showIndentGuide: true
+    showInvisibles: true
+  "exception-reporting":
+    userId: "e2e0eefe-638e-dcc4-8f9b-53567a76f9a1"
+  "git-plus":
+    messageTimeout: 1
+    openInPane: false
+  "jscs-fixer":
+    defaultPreset: "airbnb"
+    esprima: true
+  "language-babel": {}
+  linter:
+    errorPanelHeight: 20
+    showErrorInline: false
+  "linter-jscs":
+    esnext: true
+    onlyConfig: true
+  "markdown-preview":
+    liveUpdate: false
+  "one-dark-ui":
+    fontSize: 10
+    layoutMode: "Compact"
+  react: {}
+  tabs:
+    usePreviewTabs: true
+  "tool-bar":
+    position: "Bottom"
+    visible: false
+  "tree-view":
+    hideIgnoredNames: true
+  welcome:
+    showOnStartup: false
+".coffee.jsx.source":
+  editor:
+    preferredLineLength: 200
+".js.jsx.source":
+  editor:
+    preferredLineLength: 200
+".rust.source":
+  editor:
+    preferredLineLength: 99
