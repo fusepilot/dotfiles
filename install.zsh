@@ -3,7 +3,7 @@
 TIME=$(date "+%Y-%m-%d_%H-%M-%S")
 DIR=~/.dotfiles
 OLDDIR=~/.dotfiles_"$TIME"
-FILES=".zshrc .atom .osx .aliases"
+FILES=(.zshrc .atom .osx .aliases)
 
 # create dotfiles backup in ~
 mkdir -p $OLDDIR
