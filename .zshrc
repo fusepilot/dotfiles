@@ -23,6 +23,13 @@ else
   export EDITOR='subl'
 fi
 
+# source houdini
+if [[ -s /Library/Frameworks/Houdini.framework/Versions/Current/Resources ]]; then
+  cd /Library/Frameworks/Houdini.framework/Versions/Current/Resources
+  source houdini_setup_bash
+  cd -
+fi
+
 export VISUAL=$EDITOR
 
 # export PATH="$HOME/bin:$PATH"
