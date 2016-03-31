@@ -67,13 +67,19 @@ bindkey -s "^[Oo" "/"
 
 unalias gm
 
+function command_exists {
+  type "$1" &> /dev/null;
+}
+
 # nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # pyenv
-export PYENV_ROOT=/usr/local/var/pyenv
-eval "$(pyenv init -)"
+if command_exists pyenv ; then
+  export PYENV_ROOT=/usr/local/var/pyenv
+  eval "$(pyenv init -)"
+fi
 
 # utils
 function source-dotfiles {
