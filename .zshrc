@@ -23,6 +23,13 @@ else
   export EDITOR='subl'
 fi
 
+# source houdini
+if [[ -s /Library/Frameworks/Houdini.framework/Versions/Current/Resources ]]; then
+  cd /Library/Frameworks/Houdini.framework/Versions/Current/Resources
+  source houdini_setup_bash
+  cd -
+fi
+
 export VISUAL=$EDITOR
 
 # export PATH="$HOME/bin:$PATH"
@@ -60,13 +67,19 @@ bindkey -s "^[Oo" "/"
 
 unalias gm
 
+function command_exists {
+  type "$1" &> /dev/null;
+}
+
 # nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # pyenv
-export PYENV_ROOT=/usr/local/var/pyenv
-eval "$(pyenv init -)"
+if command_exists pyenv ; then
+  export PYENV_ROOT=/usr/local/var/pyenv
+  eval "$(pyenv init -)"
+fi
 
 # utils
 function source-dotfiles {
