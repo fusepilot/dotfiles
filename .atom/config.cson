@@ -5,6 +5,8 @@
       "atom-ternjs"
       "linter-coffeelint"
       "racer"
+      "platformio-ide"
+      "platformio-ide-terminal"
     ]
     excludeVcsIgnoredPaths: false
   editor:
