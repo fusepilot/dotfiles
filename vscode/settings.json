@@ -1,0 +1,12 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "editor.fontFamily": "Hermit-medium, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 13,
+    "editor.renderWhitespace": true,
+    "editor.tabSize": 2,
+    "typescript.check.tscVersion": false,
+    "window.zoomLevel": 0,
+    "editor.quickSuggestions": false,
+    "editor.tabCompletion": true,
+    "git.confirmSync": false
+  }
